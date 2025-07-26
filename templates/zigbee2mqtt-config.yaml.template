@@ -1,0 +1,60 @@
+# Zigbee2MQTT Configuration Template
+# Подключение к MQTT серверу
+
+# Основные настройки
+permit_join: ${PERMIT_JOIN:-false}
+mqtt:
+  base_topic: ${MQTT_BASE_TOPIC:-zigbee2mqtt}
+  server: ${MQTT_SERVER:-mqtt://mqtt:1883}
+  # Опционально: аутентификация
+  user: ${MQTT_USER:-}
+  password: ${MQTT_PASSWORD:-}
+  client_id: ${MQTT_CLIENT_ID:-zigbee2mqtt_bridge}
+  keepalive: ${MQTT_KEEPALIVE:-60}
+  version: ${MQTT_VERSION:-4}  # MQTT протокол версии 4 (совместим с 3.11)
+  clean: ${MQTT_CLEAN:-true}
+  reconnect_period: ${MQTT_RECONNECT_PERIOD:-10}
+  reject_unauthorized: ${MQTT_REJECT_UNAUTHORIZED:-false}
+
+# Настройки Zigbee адаптера
+serial:
+  port: ${ZIGBEE_ADAPTER_PORT:-/dev/ttyACM0}
+  adapter: ${ZIGBEE_ADAPTER:-zstack}
+
+# Настройки сети
+network:
+  pan_id: ${ZIGBEE_PAN_ID:-0x6754}
+  extended_pan_id: '${ZIGBEE_EXTENDED_PAN_ID:-DD:DD:DD:DD:DD:DD:DD:DD}'
+  channel_list: [${ZIGBEE_CHANNELS:-11, 15, 20, 25}]
+  network_key: '${ZIGBEE_NETWORK_KEY:-GENERATE}'
+
+# Настройки безопасности
+security_policy:
+  network_key: ${ZIGBEE_SECURITY_NETWORK_KEY:-true}
+  application_key: ${ZIGBEE_SECURITY_APPLICATION_KEY:-true}
+  tc_link_key: ${ZIGBEE_SECURITY_TC_LINK_KEY:-true}
+
+# Настройки устройств
+device_options:
+  legacy: ${ZIGBEE_DEVICE_LEGACY:-false}
+
+# Настройки логирования
+log_level: ${ZIGBEE_LOG_LEVEL:-info}
+log_output:
+  - ${ZIGBEE_LOG_OUTPUT:-console}
+  - file
+
+# Настройки веб-интерфейса
+frontend:
+  port: ${ZIGBEE2MQTT_PORT:-8080}
+  host: ${ZIGBEE2MQTT_HOST:-0.0.0.0}
+
+# Настройки Home Assistant
+homeassistant: ${ZIGBEE_HOMEASSISTANT:-false}
+
+# Настройки устройств (примеры)
+devices:
+  # Пример устройства
+  # '0x00158d0009b1b2b3':
+  #   friendly_name: 'My Device'
+  #   retain: false 

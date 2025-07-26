@@ -1,0 +1,42 @@
+services:
+  # MQTT Broker (Eclipse Mosquitto)
+  mqtt:
+    image: eclipse-mosquitto:2.0.18
+    container_name: mqtt-broker
+    restart: unless-stopped
+    ports:
+      - "${MQTT_PORT:-1883}:1883"  # MQTT порт
+      - "${MQTT_WS_PORT:-9001}:9001"  # WebSocket порт
+    volumes:
+      - ./mqtt/config:/mosquitto/config
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
+    networks:
+      - zigbee-network
+
+  # Zigbee2MQTT (версия 1.42.0 - последняя стабильная до 2.0 для лучшей совместимости)
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt:1.42.0
+    container_name: zigbee2mqtt
+    restart: unless-stopped
+    ports:
+      - "${ZIGBEE2MQTT_PORT:-8080}:8080"  # Web интерфейс
+    volumes:
+      - ./zigbee2mqtt/data:/app/data
+      - ${ZIGBEE_ADAPTER_PORT:-/dev/ttyACM0}:${ZIGBEE_ADAPTER_PORT:-/dev/ttyACM0}  # Zigbee адаптер
+    environment:
+      - TZ=${TZ:-Europe/Moscow}
+    depends_on:
+      - mqtt
+    networks:
+      - zigbee-network
+    devices:
+      - ${ZIGBEE_ADAPTER_PORT:-/dev/ttyACM0}:${ZIGBEE_ADAPTER_PORT:-/dev/ttyACM0}  # Zigbee адаптер
+
+networks:
+  zigbee-network:
+    driver: bridge
+
+volumes:
+  mqtt_data:
+  zigbee2mqtt_data: 

@@ -1,0 +1,32 @@
+# MQTT Broker Configuration Template
+# Protocol version 3.11 support
+
+# Основные настройки
+listener ${MQTT_PORT:-1883}
+protocol mqtt
+allow_anonymous ${MQTT_ALLOW_ANONYMOUS:-true}
+
+# WebSocket поддержка
+listener ${MQTT_WS_PORT:-9001}
+protocol websockets
+
+# Логирование
+log_dest file ${MQTT_LOG_FILE:-/mosquitto/log/mosquitto.log}
+log_dest stdout
+log_type ${MQTT_LOG_TYPE:-all}
+log_timestamp ${MQTT_LOG_TIMESTAMP:-true}
+
+# Сохранение данных
+persistence ${MQTT_PERSISTENCE:-true}
+persistence_location ${MQTT_PERSISTENCE_LOCATION:-/mosquitto/data/}
+
+# Настройки производительности
+max_inflight_messages ${MQTT_MAX_INFLIGHT:-20}
+max_queued_messages ${MQTT_MAX_QUEUED:-100}
+
+# Безопасность (опционально)
+${MQTT_PASSWORD_FILE:+password_file ${MQTT_PASSWORD_FILE}}
+${MQTT_ACL_FILE:+acl_file ${MQTT_ACL_FILE}}
+
+# Дополнительные настройки
+${MQTT_EXTRA_CONFIG} 
