@@ -1,0 +1,54 @@
+# MQTT Broker Configuration Template
+# Protocol version 3.11 support
+
+# Основные настройки
+listener 1883
+protocol mqtt
+allow_anonymous true
+
+# WebSocket поддержка
+listener 9001
+protocol websockets
+
+# Логирование
+log_dest file /mosquitto/log/mosquitto.log
+log_dest stdout
+log_type all
+log_timestamp true
+
+# Сохранение данных
+persistence true
+persistence_location /mosquitto/data/
+
+# Настройки производительности
+max_inflight_messages 20
+max_queued_messages 100
+
+# Безопасность (опционально)
+# password_file /mosquitto/config/password_file
+# acl_file /mosquitto/config/acl_file
+
+# Подключение конфигурации моста (если включен)
+# Этот файл генерируется автоматически из шаблона
+
+connection bridge-zigbee-manager-bridge
+address mq.rocket-home.ru:8883
+bridge_protocol_version mqttv311
+bridge_clientid zigbee-manager-bridge
+bridge_username f54c2971-7b2b-49f6-a6db-bca59e0cccca
+bridge_password zDiAyp2cD9mQwVV
+bridge_keepalive_interval 60
+bridge_clean_session true
+
+# TLS настройки по умолчанию
+bridge_cafile /etc/ssl/certs/ca-certificates.crt
+bridge_tls_version tlsv1.2
+bridge_insecure false
+
+# Автоматический топик для двусторонней синхронизации
+# (все сообщения, QoS 2, both directions)
+topic # both 2
+
+bridge_restart_timeout 30
+bridge_inactive_timeout 60
+bridge_log_type all 

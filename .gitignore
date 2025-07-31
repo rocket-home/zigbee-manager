@@ -20,9 +20,9 @@ mqtt/log/
 
 # Docker
 *.pid
+.dockerignore
 
-# Python/IDE
-__pycache__/
+# IDE
 .idea/
 .vscode/
 
@@ -34,6 +34,7 @@ Thumbs.db
 *~
 *.bak
 *.backup.*
+backups/
 
 # Скрипты и шаблоны не игнорируем (оставляем в репозитории)
 !scripts/

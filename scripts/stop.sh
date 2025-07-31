@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Скрипт для остановки Zigbee2MQTT с MQTT Broker
 # Автор: Zigbee Manager

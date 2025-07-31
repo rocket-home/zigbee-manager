@@ -1,0 +1,23 @@
+# Конфигурация моста к облачному MQTT брокеру
+# Этот файл генерируется автоматически из шаблона
+
+connection ${CLOUD_MQTT_CLIENT_ID}
+address ${CLOUD_MQTT_HOST}:${CLOUD_MQTT_PORT}
+bridge_protocol_version mqttv311
+# Учетные данные
+remote_username ${CLOUD_MQTT_USERNAME}
+remote_password ${CLOUD_MQTT_PASSWORD}
+keepalive_interval ${CLOUD_MQTT_KEEPALIVE}
+cleansession ${CLOUD_MQTT_CLEAN}
+notifications false
+
+# TLS настройки для безопасного подключения
+bridge_cafile /mosquitto/config/letsencrypt-root.pem
+bridge_tls_version tlsv1.2
+bridge_insecure false
+
+# Автоматический топик для двусторонней синхронизации
+# (все сообщения, QoS 2, both directions)
+topic # both 2
+
+restart_timeout 10 30 

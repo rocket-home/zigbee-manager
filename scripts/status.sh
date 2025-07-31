@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Скрипт для проверки статуса Zigbee2MQTT с MQTT Broker
 # Автор: Zigbee Manager

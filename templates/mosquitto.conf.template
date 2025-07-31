@@ -2,31 +2,34 @@
 # Protocol version 3.11 support
 
 # Основные настройки
-listener ${MQTT_PORT:-1883}
+listener ${MQTT_PORT}
 protocol mqtt
-allow_anonymous ${MQTT_ALLOW_ANONYMOUS:-true}
+allow_anonymous ${MQTT_ALLOW_ANONYMOUS}
 
 # WebSocket поддержка
-listener ${MQTT_WS_PORT:-9001}
+listener ${MQTT_WS_PORT}
 protocol websockets
 
 # Логирование
-log_dest file ${MQTT_LOG_FILE:-/mosquitto/log/mosquitto.log}
+log_dest file ${MQTT_LOG_FILE}
 log_dest stdout
-log_type ${MQTT_LOG_TYPE:-all}
-log_timestamp ${MQTT_LOG_TIMESTAMP:-true}
+log_type ${MQTT_LOG_TYPE}
+log_timestamp ${MQTT_LOG_TIMESTAMP}
 
 # Сохранение данных
-persistence ${MQTT_PERSISTENCE:-true}
-persistence_location ${MQTT_PERSISTENCE_LOCATION:-/mosquitto/data/}
+persistence ${MQTT_PERSISTENCE}
+persistence_location ${MQTT_PERSISTENCE_LOCATION}
 
 # Настройки производительности
-max_inflight_messages ${MQTT_MAX_INFLIGHT:-20}
-max_queued_messages ${MQTT_MAX_QUEUED:-100}
+max_inflight_messages ${MQTT_MAX_INFLIGHT}
+max_queued_messages ${MQTT_MAX_QUEUED}
 
 # Безопасность (опционально)
-${MQTT_PASSWORD_FILE:+password_file ${MQTT_PASSWORD_FILE}}
-${MQTT_ACL_FILE:+acl_file ${MQTT_ACL_FILE}}
+# password_file /mosquitto/config/password_file
+# acl_file /mosquitto/config/acl_file
 
 # Дополнительные настройки
-${MQTT_EXTRA_CONFIG} 
+# ${MQTT_EXTRA_CONFIG}
+
+# Подключение конфигураций мостов из директории bridge
+include_dir /mosquitto/config/bridge
