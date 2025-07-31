@@ -301,9 +301,18 @@ start: ## Запустить все сервисы
 	@$(DOCKER_COMPOSE_CMD) up -d
 	@echo "$(GREEN)✅ Сервисы запущены!$(NC)"
 	@echo "$(BLUE)📋 Доступные сервисы:$(NC)"
-	@echo "   • MQTT Broker: mqtt://localhost:$${MQTT_PORT:-1883}"
-	@echo "   • MQTT WebSocket: ws://localhost:$${MQTT_WS_PORT:-9001}"
-	@echo "   • Zigbee2MQTT Web UI: http://localhost:$${ZIGBEE2MQTT_PORT:-8083}"
+	@if [ -f $(ENV_FILE) ]; then \
+		MQTT_PORT=$$(grep "^MQTT_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		MQTT_WS_PORT=$$(grep "^MQTT_WS_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		ZIGBEE2MQTT_PORT=$$(grep "^ZIGBEE2MQTT_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		echo "   • MQTT Broker: mqtt://localhost:$${MQTT_PORT:-1883}"; \
+		echo "   • MQTT WebSocket: ws://localhost:$${MQTT_WS_PORT:-9001}"; \
+		echo "   • Zigbee2MQTT Web UI: http://localhost:$${ZIGBEE2MQTT_PORT:-8083}"; \
+	else \
+		echo "   • MQTT Broker: mqtt://localhost:1883"; \
+		echo "   • MQTT WebSocket: ws://localhost:9001"; \
+		echo "   • Zigbee2MQTT Web UI: http://localhost:8083"; \
+	fi
 
 # Остановка системы
 stop: ## Остановить все сервисы
@@ -327,9 +336,18 @@ restart: ## Перезапустить все сервисы
 	@$(DOCKER_COMPOSE_CMD) up -d
 	@echo "$(GREEN)✅ Сервисы перезапущены!$(NC)"
 	@echo "$(BLUE)📋 Доступные сервисы:$(NC)"
-	@echo "   • MQTT Broker: mqtt://localhost:$${MQTT_PORT:-1883}"
-	@echo "   • MQTT WebSocket: ws://localhost:$${MQTT_WS_PORT:-9001}"
-	@echo "   • Zigbee2MQTT Web UI: http://localhost:$${ZIGBEE2MQTT_PORT:-8083}"
+	@if [ -f $(ENV_FILE) ]; then \
+		MQTT_PORT=$$(grep "^MQTT_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		MQTT_WS_PORT=$$(grep "^MQTT_WS_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		ZIGBEE2MQTT_PORT=$$(grep "^ZIGBEE2MQTT_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		echo "   • MQTT Broker: mqtt://localhost:$${MQTT_PORT:-1883}"; \
+		echo "   • MQTT WebSocket: ws://localhost:$${MQTT_WS_PORT:-9001}"; \
+		echo "   • Zigbee2MQTT Web UI: http://localhost:$${ZIGBEE2MQTT_PORT:-8083}"; \
+	else \
+		echo "   • MQTT Broker: mqtt://localhost:1883"; \
+		echo "   • MQTT WebSocket: ws://localhost:9001"; \
+		echo "   • Zigbee2MQTT Web UI: http://localhost:8083"; \
+	fi
 
 # Статус системы
 status: ## Показать статус всех сервисов
@@ -339,9 +357,18 @@ status: ## Показать статус всех сервисов
 	@$(DOCKER_COMPOSE_CMD) ps
 	@echo ""
 	@echo "$(BLUE)📋 Информация о сервисах:$(NC)"
-	@echo "   • MQTT Broker: mqtt://localhost:$${MQTT_PORT:-1883}"
-	@echo "   • MQTT WebSocket: ws://localhost:$${MQTT_WS_PORT:-9001}"
-	@echo "   • Zigbee2MQTT Web UI: http://localhost:$${ZIGBEE2MQTT_PORT:-8083}"
+	@if [ -f $(ENV_FILE) ]; then \
+		MQTT_PORT=$$(grep "^MQTT_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		MQTT_WS_PORT=$$(grep "^MQTT_WS_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		ZIGBEE2MQTT_PORT=$$(grep "^ZIGBEE2MQTT_PORT=" $(ENV_FILE) | cut -d= -f2); \
+		echo "   • MQTT Broker: mqtt://localhost:$${MQTT_PORT:-1883}"; \
+		echo "   • MQTT WebSocket: ws://localhost:$${MQTT_WS_PORT:-9001}"; \
+		echo "   • Zigbee2MQTT Web UI: http://localhost:$${ZIGBEE2MQTT_PORT:-8083}"; \
+	else \
+		echo "   • MQTT Broker: mqtt://localhost:1883"; \
+		echo "   • MQTT WebSocket: ws://localhost:9001"; \
+		echo "   • Zigbee2MQTT Web UI: http://localhost:8083"; \
+	fi
 
 # Просмотр логов
 logs: ## Показать логи всех сервисов
