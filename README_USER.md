@@ -82,7 +82,7 @@ make status
 
 ### Шаг 5: Доступ к интерфейсам
 
-- **Zigbee2MQTT Web UI**: http://localhost:8081
+- **Zigbee2MQTT Web UI**: http://localhost:8083
 - **MQTT Broker**: localhost:1883
 
 ---
@@ -610,7 +610,7 @@ make stop
 
 # Проверить, что порты свободны
 sudo lsof -i :1883
-sudo lsof -i :8081
+sudo lsof -i :8083
 
 # Запустить заново
 make start
@@ -659,7 +659,7 @@ make start
 
 **A:**
 1. Включите режим подключения: `make permit-join-enable`
-2. Откройте Zigbee2MQTT Web UI: http://localhost:8081
+2. Откройте Zigbee2MQTT Web UI: http://localhost:8083
 3. Подключите устройство к питанию
 4. Дождитесь появления устройства в списке
 5. Выключите режим подключения: `make permit-join-disable`
@@ -700,7 +700,7 @@ make restart
 ```bash
 MQTT_PORT=1883          # Порт MQTT брокера
 MQTT_WS_PORT=9001       # Порт WebSocket
-ZIGBEE2MQTT_PORT=8081   # Порт веб-интерфейса Zigbee2MQTT
+ZIGBEE2MQTT_PORT=8083   # Порт веб-интерфейса Zigbee2MQTT
 ```
 
 ---
