@@ -34,14 +34,21 @@
 ```bash
 git clone https://github.com/rocket-home/zigbee-manager.git
 cd zigbee-manager
-make env                    # Создает .env из env.example
-make setup                  # Обычная настройка системы
+make env           # Создает .env из env.example
+make setup         # Обычная настройка системы
 # ИЛИ
-make secure-setup           # Настройка с генерацией безопасности
-make cloud-mqtt-credentials # Ввод имени и пароля для подключения к облачному MQTT
-AUTO=true make generate-configs && make restart
-make status                 # Проверить статус
+make secure-setup  # Настройка с генерацией параметров безопасности сети
+make status        # Проверить статус
 # Открыть: http://localhost:8084
+```
+
+---
+
+## ☁️ Подключение к облачному MQTT
+
+```bash
+make cloud-mqtt-credentials # Ввод имени и пароля для подключения к облачному MQTT
+AUTO=true make generate-configs && make restart # Генерация конфигурации и перезапуск сервисов
 ```
 
 ---
