@@ -41,14 +41,18 @@ TEMP_DIR="../backups/restore-temp-$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$TEMP_DIR"
 
 echo -e "${BLUE}📦 Распаковка архива...${NC}"
+# Получаем абсолютный путь к архиву
+ABSOLUTE_BACKUP_PATH=$(realpath "$BACKUP_FILE")
 cd "$TEMP_DIR"
-tar -xzf "$BACKUP_FILE"
+tar -xzf "$ABSOLUTE_BACKUP_PATH"
 cd - > /dev/null
 
 # Поиск распакованной директории
 RESTORE_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "temp-*" | head -1)
 if [ -z "$RESTORE_DIR" ]; then
     echo -e "${RED}❌ Не удалось найти распакованную директорию${NC}"
+    echo -e "${BLUE}📋 Содержимое временной директории:${NC}"
+    ls -la "$TEMP_DIR"
     rm -rf "$TEMP_DIR"
     exit 1
 fi
@@ -87,31 +91,32 @@ fi
 
 # Создание необходимых директорий
 echo -e "${BLUE}📁 Создание структуры директорий...${NC}"
-mkdir -p mqtt/config mqtt/data mqtt/log zigbee2mqtt/data scripts templates
+mkdir -p ../mqtt/config ../mqtt/data ../zigbee2mqtt/data ../scripts ../templates
 
 # Восстановление конфигурационных файлов
 echo -e "${BLUE}📋 Восстановление конфигурационных файлов...${NC}"
 
 # Основные конфигурации
-cp "$RESTORE_DIR/config/.env" .env
-cp "$RESTORE_DIR/config/docker-compose.yml" docker-compose.yml
-cp "$RESTORE_DIR/config/Makefile" Makefile
+echo -e "${BLUE}📋 Копирование .env из $RESTORE_DIR/config/.env в ../.env${NC}"
+cp "$RESTORE_DIR/config/.env" ../.env
+cp "$RESTORE_DIR/config/docker-compose.yml" ../docker-compose.yml
+cp "$RESTORE_DIR/config/Makefile" ../Makefile
 
 # Конфигурации MQTT
 if [ -f "$RESTORE_DIR/config/mosquitto.conf" ]; then
-    cp "$RESTORE_DIR/config/mosquitto.conf" mqtt/config/
+    cp "$RESTORE_DIR/config/mosquitto.conf" ../mqtt/config/
     echo -e "${GREEN}✅ Конфигурация MQTT восстановлена${NC}"
 fi
 
 # Конфигурации Zigbee2MQTT
 if [ -f "$RESTORE_DIR/config/configuration.yaml" ]; then
-    cp "$RESTORE_DIR/config/configuration.yaml" zigbee2mqtt/data/
+    cp "$RESTORE_DIR/config/configuration.yaml" ../zigbee2mqtt/data/
     echo -e "${GREEN}✅ Конфигурация Zigbee2MQTT восстановлена${NC}"
 fi
 
 # Шаблоны
 if [ -d "$RESTORE_DIR/config/templates" ]; then
-    cp -r "$RESTORE_DIR/config/templates" ./
+    cp -r "$RESTORE_DIR/config/templates" ../
     echo -e "${GREEN}✅ Шаблоны восстановлены${NC}"
 fi
 
@@ -121,27 +126,17 @@ echo -e "${BLUE}💾 Восстановление данных...${NC}"
 if [ -d "$RESTORE_DIR/data" ] && [ "$(ls -A "$RESTORE_DIR/data")" ]; then
     # Данные MQTT
     if [ -d "$RESTORE_DIR/data" ]; then
-        cp -r "$RESTORE_DIR/data"/* mqtt/data/ 2>/dev/null || true
+        cp -r "$RESTORE_DIR/data"/* ../mqtt/data/ 2>/dev/null || true
         echo -e "${GREEN}✅ Данные MQTT восстановлены${NC}"
     fi
     
     # Данные Zigbee2MQTT
     if [ -d "$RESTORE_DIR/data" ]; then
-        cp -r "$RESTORE_DIR/data"/* zigbee2mqtt/data/ 2>/dev/null || true
+        cp -r "$RESTORE_DIR/data"/* ../zigbee2mqtt/data/ 2>/dev/null || true
         echo -e "${GREEN}✅ Данные Zigbee2MQTT восстановлены${NC}"
     fi
 else
     echo -e "${YELLOW}⚠️  Данные не найдены в резервной копии${NC}"
-fi
-
-# Восстановление логов
-echo -e "${BLUE}📋 Восстановление логов...${NC}"
-
-if [ -d "$RESTORE_DIR/logs" ] && [ "$(ls -A "$RESTORE_DIR/logs")" ]; then
-    cp -r "$RESTORE_DIR/logs"/* mqtt/log/ 2>/dev/null || true
-    echo -e "${GREEN}✅ Логи восстановлены${NC}"
-else
-    echo -e "${YELLOW}⚠️  Логи не найдены в резервной копии${NC}"
 fi
 
 # Очистка временной директории
@@ -149,10 +144,10 @@ rm -rf "$TEMP_DIR"
 
 # Показываем восстановленные параметры безопасности
 echo -e "${BLUE}🔐 Восстановленные параметры безопасности:${NC}"
-if [ -f .env ]; then
-    echo "   • PAN ID: $(grep ZIGBEE_PAN_ID .env | cut -d= -f2)"
-    echo "   • Extended PAN ID: $(grep ZIGBEE_EXTENDED_PAN_ID .env | cut -d= -f2)"
-    echo "   • Network Key: $(grep ZIGBEE_NETWORK_KEY .env | cut -d= -f2)"
+if [ -f ../.env ]; then
+    echo "   • PAN ID: $(grep ZIGBEE_PAN_ID ../.env | cut -d= -f2)"
+    echo "   • Extended PAN ID: $(grep ZIGBEE_EXTENDED_PAN_ID ../.env | cut -d= -f2)"
+    echo "   • Network Key: $(grep ZIGBEE_NETWORK_KEY ../.env | cut -d= -f2)"
 fi
 
 echo ""
