@@ -18,6 +18,35 @@ CONFIG_DIR="../zigbee2mqtt/data"
 MQTT_CONFIG_DIR="../mqtt/config"
 ENV_FILE="../.env"
 
+# Функция для безопасной записи файла с автоматическим использованием sudo при необходимости
+safe_write_file() {
+    local source_file="$1"
+    local target_file="$2"
+    local temp_file
+    
+    # Создаем временный файл
+    temp_file=$(mktemp)
+    
+    # Копируем содержимое во временный файл
+    cp "$source_file" "$temp_file"
+    
+    # Проверяем, нужен ли sudo для записи в целевую директорию
+    if [ -e "$target_file" ] && [ ! -w "$target_file" ]; then
+        # Файл существует и не доступен для записи
+        echo -e "${BLUE}🔐 Используется sudo для записи файла...${NC}"
+        sudo mv "$temp_file" "$target_file"
+        sudo chown "$(id -u):$(id -g)" "$target_file"
+    elif [ -d "$(dirname "$target_file")" ] && [ ! -w "$(dirname "$target_file")" ]; then
+        # Директория не доступна для записи
+        echo -e "${BLUE}🔐 Используется sudo для записи файла...${NC}"
+        sudo mv "$temp_file" "$target_file"
+        sudo chown "$(id -u):$(id -g)" "$target_file"
+    else
+        # Обычная запись
+        mv "$temp_file" "$target_file"
+    fi
+}
+
 echo -e "${BLUE}🔧 Генерация конфигураций из шаблонов...${NC}"
 
 # Проверка наличия envsubst
@@ -178,7 +207,12 @@ if [ -f "${TEMPLATES_DIR}/zigbee2mqtt-config.yaml.template" ]; then
     export ZIGBEE_DEVICE_LEGACY ZIGBEE_LOG_LEVEL ZIGBEE_LOG_OUTPUT
     export ZIGBEE2MQTT_PORT ZIGBEE2MQTT_HOST ZIGBEE_HOMEASSISTANT PERMIT_JOIN
     
-    envsubst < "${TEMPLATES_DIR}/zigbee2mqtt-config.yaml.template" > "${CONFIG_DIR}/configuration.yaml"
+    # Создаем временный файл с конфигурацией
+    temp_config=$(mktemp)
+    envsubst < "${TEMPLATES_DIR}/zigbee2mqtt-config.yaml.template" > "$temp_config"
+    
+    # Безопасно записываем файл
+    safe_write_file "$temp_config" "${CONFIG_DIR}/configuration.yaml"
     echo -e "${GREEN}✅ Конфигурация Zigbee2MQTT сгенерирована${NC}"
 else
     echo -e "${RED}❌ Шаблон Zigbee2MQTT не найден: ${TEMPLATES_DIR}/zigbee2mqtt-config.yaml.template${NC}"
@@ -195,7 +229,13 @@ if [ -f "${TEMPLATES_DIR}/mosquitto.conf.template" ]; then
     export MQTT_PERSISTENCE MQTT_PERSISTENCE_LOCATION
     export MQTT_MAX_INFLIGHT MQTT_MAX_QUEUED
     export MQTT_PASSWORD_FILE MQTT_ACL_FILE MQTT_EXTRA_CONFIG
-    if envsubst < "${TEMPLATES_DIR}/mosquitto.conf.template" > "${MQTT_CONFIG_DIR}/mosquitto.conf" 2>/dev/null; then
+    
+    # Создаем временный файл с конфигурацией MQTT
+    temp_mqtt_config=$(mktemp)
+    envsubst < "${TEMPLATES_DIR}/mosquitto.conf.template" > "$temp_mqtt_config"
+    
+    # Безопасно записываем файл
+    if safe_write_file "$temp_mqtt_config" "${MQTT_CONFIG_DIR}/mosquitto.conf"; then
         echo -e "${GREEN}✅ Конфигурация MQTT сгенерирована${NC}"
         
         # Создаем директорию для конфигураций мостов, если она не существует
@@ -227,7 +267,12 @@ if [ "$CLOUD_MQTT_ENABLED" = "true" ]; then
         export CLOUD_MQTT_KEEPALIVE CLOUD_MQTT_CLEAN
         export CLOUD_MQTT_BRIDGE_TOPIC CLOUD_MQTT_LOCAL_TOPIC
         
-        if envsubst < "${TEMPLATES_DIR}/mosquitto-bridge.conf.template" > "${MQTT_CONFIG_DIR}/bridge/cloud-bridge.conf" 2>/dev/null; then
+        # Создаем временный файл с конфигурацией моста
+        temp_bridge_config=$(mktemp)
+        envsubst < "${TEMPLATES_DIR}/mosquitto-bridge.conf.template" > "$temp_bridge_config"
+        
+        # Безопасно записываем файл
+        if safe_write_file "$temp_bridge_config" "${MQTT_CONFIG_DIR}/bridge/cloud-bridge.conf"; then
             echo -e "${GREEN}✅ Конфигурация моста сгенерирована в директории bridge${NC}"
             echo -e "${BLUE}   • Хост: ${CLOUD_MQTT_HOST}:${CLOUD_MQTT_PORT}${NC}"
             echo -e "${BLUE}   • Протокол: MQTT ${CLOUD_MQTT_PROTOCOL}${NC}"

@@ -75,19 +75,19 @@ cd - > /dev/null
 
 echo -e "${GREEN}✅ Архив создан: $(dirname "$BACKUP_DIR")/$(basename "$BACKUP_DIR").tar.gz${NC}"
 
+# Очистка временной директории
+echo -e "${BLUE}🧹 Очистка временной директории...${NC}"
+rm -rf "$BACKUP_DIR"
+echo -e "${GREEN}✅ Временная директория удалена${NC}"
+
 echo ""
 echo -e "${GREEN}🎉 Резервные копии созданы успешно!${NC}"
 echo ""
 echo -e "${BLUE}📋 Созданные файлы:${NC}"
-echo "   • $BACKUP_DIR/.env.backup"
-if [ -f ../zigbee2mqtt/data/configuration.yaml ]; then
-    echo "   • $BACKUP_DIR/configuration.yaml.backup"
-fi
-echo "   • $BACKUP_DIR/zigbee-security-params.txt"
 echo "   • $(dirname "$BACKUP_DIR")/$(basename "$BACKUP_DIR").tar.gz"
 echo ""
 echo -e "${YELLOW}⚠️  ВАЖНО: Сохраните эти файлы в безопасном месте!${NC}"
 echo -e "${YELLOW}💡 Рекомендуется: пароль-менеджер, зашифрованный файл или сейф${NC}"
 echo ""
 echo -e "${BLUE}📖 Для восстановления используйте:${NC}"
-echo "   ./restore-security.sh $BACKUP_DIR" 
+echo "   make restore BACKUP_PATH=backups/$(basename "$BACKUP_DIR")" 
